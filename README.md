@@ -50,7 +50,7 @@ Manual execution is available through POST endpoints (see below).
 Two sensor IDs are currently supported, each with its own telemetry schema. Both routes require an HTTP `POST` with `Content-Type: application/json` (or any body with a parseable JSON) and must include the shared token `"secreto"`.
 
 ### Sensor 001 – Temperature & Humidity
-- **Endpoint:** `http://98.91.29.98/recibirdatos/sensor001`
+- **Endpoint:** `http://localhost/recibirdatos/sensor001`
 - **Payload schema:**
 
 ```json
@@ -64,7 +64,7 @@ Two sensor IDs are currently supported, each with its own telemetry schema. Both
 Upon validation, `agente` forwards `{temperatura, humedad}` to Orion entity `sensor001`. The ETL service later reads from CrateDB table `etsensortemphum` and computes an irrigation KPI based on temperature bands and humidity adjustments.
 
 ### Sensor 002 – GPS Tracker
-- **Endpoint:** `http://98.91.29.98/recibirdatos/sensor002`
+- **Endpoint:** `http://localhost/recibirdatos/sensor002`
 - **Payload schema:**
 
 ```json
@@ -82,7 +82,7 @@ After validation, the gateway patches Orion entity `sensor002`. Quantum Leap rec
 ### Testing the Webhooks (PowerShell example)
 
 ```powershell
-Invoke-RestMethod -Uri "http://98.91.29.98/recibirdatos/sensor001" -Method Post -Body '{
+Invoke-RestMethod -Uri "http://localhost/recibirdatos/sensor001" -Method Post -Body '{
   "temperatura": { "type": "float", "value": 23.1 },
   "humedad": { "type": "float", "value": 58.0 },
   "token": "secreto"
@@ -211,7 +211,7 @@ Add `-v` to also drop MongoDB/CrateDB/Grafana volumes if you need a clean slate.
 ---
 
 ### Quick Reference
-- Sensor webhooks: `http://98.91.29.98/recibirdatos/<sensor_id>` (token required).
+- Sensor webhooks: `http://localhost/recibirdatos/<sensor_id>` (token required).
 - ETL API base URL: `http://localhost:8080` (inside Docker host).
 - MongoDB curated collections: `sprinkler_db.riego_kpi`, `gps_db.location_history`.
 - CrateDB raw tables: `etsensortemphum`, `etsensorgps`.
