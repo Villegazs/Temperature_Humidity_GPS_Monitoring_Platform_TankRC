@@ -17,7 +17,7 @@ services:
   
   # Frontend - React Web Interface (Port 80)
   orion-nexus-frontend:
-    build: ./services/orion-nexus-frontend
+    build: ./orion-nexus/orion-nexus-frontend
     container_name: orion-nexus-frontend
     hostname: frontend
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
 
   # Backend API - FastAPI Service (Port 8000)
   oruga-backend:
-    build: ./services/oruga-backend
+    build: ./orion-nexus/oruga-backend
     container_name: oruga-backend
     hostname: backend
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
 
   # ETL Service - Data Processing & Analytics (Port 8080)
   etl-service:
-    build: ./services/etl-service
+    build: ./etl-service
     container_name: etl-service
     hostname: etl
     restart: unless-stopped
@@ -85,7 +85,7 @@ services:
 
   # Sensor Gateway - IoT Data Ingestion (Port 81)
   sensor-gateway:
-    build: ./services/sensor-gateway
+    build: ./sensor-gateway
     container_name: sensor-gateway
     hostname: gateway
     restart: unless-stopped
