@@ -1,35 +1,108 @@
-# Ejemplo de como desplegar en un ambiente de prueba un framework FIWARE para 
-# una aplicacion de ciudad inteligente / Internet de las Cosas
+# FIWARE IoT Platform - Temperature, Humidity & GPS Monitoring
 # 
-# En este ejemplo vamos a usar un sensor que lee la temperatura de una termocupla
-# y la almacena en una base de datos en un servidor FiWARE en la Nube
+# Unified platform for smart irrigation and GPS tracking with FIWARE components
+# Services organized in modular architecture for scalability and maintainability
+# 
+# Requirements:
+#   - Docker Engine 20.10+
+#   - Docker Compose v2+
+#   - 8GB RAM recommended
+# 
 # sudo sysctl -w vm.max_map_count=262144
 version: "3.8"
 services:
-  etl:
-    build: ./proyectoapp
-    container_name: etl
-    hostname: pagina
+  # ============================================================================
+  # CUSTOM APPLICATION SERVICES
+  # ============================================================================
+  
+  # Frontend - React Web Interface (Port 80)
+  orion-nexus-frontend:
+    build: ./services/orion-nexus-frontend
+    container_name: orion-nexus-frontend
+    hostname: frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - oruga-backend
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:80/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Backend API - FastAPI Service (Port 8000)
+  oruga-backend:
+    build: ./services/oruga-backend
+    container_name: oruga-backend
+    hostname: backend
+    restart: unless-stopped
     expose:
-      - "8080"
+      - "8000"
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./services/oruga-backend/.env
+    depends_on:
+      - orion
+    networks:
+      - default
+    volumes:
+      - ./services/oruga-backend:/app
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ETL Service - Data Processing & Analytics (Port 8080)
+  etl-service:
+    build: ./services/etl-service
+    container_name: etl-service
+    hostname: etl
+    restart: unless-stopped
+    expose:
+      - "8000"
     ports:
       - "8080:8080"
     depends_on:
-     - mongo-db
-     - crate-db
-  # El agente es el que lee los datos del sensor y los envia al servidor FiWARE
-  agente:
-    build: ./agente
-    container_name: agente
-    hostname: agente
+      mongo-db:
+        condition: service_healthy
+      crate-db:
+        condition: service_healthy
     networks:
       - default
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Sensor Gateway - IoT Data Ingestion (Port 81)
+  sensor-gateway:
+    build: ./services/sensor-gateway
+    container_name: sensor-gateway
+    hostname: gateway
+    restart: unless-stopped
     expose:
-      - "80"
+      - "81"
     ports:
-      - "80:80"
+      - "81:81"
+    depends_on:
+      - orion
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/health || exit 1"]
+      interval: 1m
+      timeout: 5s
+      retries: 3
+      start_period: 10s
   # Orion es el motor principal, el agente, el context broker
   orion:
     image: fiware/orion-ld
