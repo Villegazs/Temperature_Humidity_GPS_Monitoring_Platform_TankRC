@@ -59,4 +59,4 @@ def recibir_datos(sensor_id):
 
 if __name__ == '__main__':
     # Se ejecuta en el puerto 80 dentro del contenedor, como especificaste
-    app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', port=81, debug=False)

@@ -5,7 +5,7 @@ Each scheduler runs in its own thread.
 import threading
 import schedule
 import time
-from proyectoapp.services.irrigation_service import etl_process_irrigation
+from services.irrigation_service import etl_process_irrigation
 from services.gps_service import etl_process_gps
 
 def run_scheduler_irrigation():

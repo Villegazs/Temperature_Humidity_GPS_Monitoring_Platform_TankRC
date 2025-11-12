@@ -4,7 +4,7 @@ Uses a Flask Blueprint to keep routes organized.
 """
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
-from proyectoapp.services.irrigation_service import etl_process_irrigation
+from services.irrigation_service import etl_process_irrigation
 import configuration as config
 
 irrigation_bp = Blueprint('irrigation_bp', __name__)
