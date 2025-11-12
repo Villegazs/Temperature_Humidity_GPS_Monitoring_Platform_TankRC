@@ -48,7 +48,7 @@ def create_temp_humidity_subscription():
 def create_gps_subscription():
     """Creates subscription for GPS sensor data."""
     subscription_data = {
-        "description": "Notificar sensor de GPS (latitud y longitud)",
+        "description": "Notificar sensor de GPS",
         "subject": {
             "entities": [{
                 "idPattern": ".*",
