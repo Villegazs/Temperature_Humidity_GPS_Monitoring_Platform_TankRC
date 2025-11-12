@@ -19,21 +19,37 @@ def list_subscriptions():
             'Fiware-ServicePath': '/'
         }
         
+        # Also try without FIWARE headers for comparison
+        basic_headers = {'Accept': 'application/json'}
+        
+        # Get with FIWARE headers
         response = requests.get(f"{orion_url}/v2/subscriptions", headers=headers, timeout=30)
         
+        # Get without FIWARE headers
+        basic_response = requests.get(f"{orion_url}/v2/subscriptions", headers=basic_headers, timeout=30)
+        
+        result = {
+            "status": "success",
+            "orion_url": orion_url,
+            "with_fiware_headers": {
+                "status_code": response.status_code,
+                "subscriptions": response.json() if response.status_code == 200 else [],
+                "total": len(response.json()) if response.status_code == 200 else 0
+            },
+            "without_fiware_headers": {
+                "status_code": basic_response.status_code,
+                "subscriptions": basic_response.json() if basic_response.status_code == 200 else [],
+                "total": len(basic_response.json()) if basic_response.status_code == 200 else 0
+            }
+        }
+        
         if response.status_code == 200:
-            subscriptions = response.json()
-            return jsonify({
-                "status": "success",
-                "total_subscriptions": len(subscriptions),
-                "subscriptions": subscriptions
-            })
+            return jsonify(result)
         else:
-            return jsonify({
-                "status": "error",
-                "message": f"Failed to retrieve subscriptions. Status: {response.status_code}",
-                "response": response.text
-            }), response.status_code
+            result["status"] = "error"
+            result["message"] = f"Failed to retrieve subscriptions. Status: {response.status_code}"
+            result["response_text"] = response.text
+            return jsonify(result), response.status_code
             
     except requests.exceptions.RequestException as e:
         return jsonify({
@@ -176,4 +192,47 @@ def get_entity(entity_id):
         return jsonify({
             "status": "error",
             "message": f"Error retrieving entity: {str(e)}"
+        }), 500
+
+@subscriptions_bp.route('/debug', methods=['GET'])
+def debug_orion():
+    """Debug endpoint to troubleshoot Orion connectivity and subscriptions."""
+    try:
+        from debug_orion import (
+            test_orion_connection,
+            list_subscriptions_with_service,
+            list_subscriptions_without_service,
+            list_entities_with_service
+        )
+        
+        # Run debug tests
+        orion_connected = test_orion_connection()
+        subs_with_service = list_subscriptions_with_service()
+        subs_without_service = list_subscriptions_without_service()
+        entities = list_entities_with_service()
+        
+        return jsonify({
+            "status": "success",
+            "debug_results": {
+                "orion_connected": orion_connected,
+                "orion_url": config.ORION_URL,
+                "subscriptions_with_fiware_headers": {
+                    "count": len(subs_with_service),
+                    "subscriptions": subs_with_service
+                },
+                "subscriptions_without_fiware_headers": {
+                    "count": len(subs_without_service),
+                    "subscriptions": subs_without_service
+                },
+                "entities": {
+                    "count": len(entities),
+                    "entities": entities
+                }
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Error running debug: {str(e)}"
         }), 500

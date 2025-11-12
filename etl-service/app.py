@@ -46,6 +46,7 @@ def home():
                 "list_all": "/subscriptions",
                 "health_check": "/subscriptions/health",
                 "recreate": "POST to /subscriptions/recreate",
+                "debug": "/subscriptions/debug",
                 "entities": {
                     "list_entities": "/subscriptions/entities",
                     "setup_entities": "POST to /subscriptions/entities/setup",
