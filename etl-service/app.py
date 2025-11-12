@@ -12,6 +12,7 @@ from scheduler import start_schedulers
 from services.irrigation_service import etl_process_irrigation
 from services.gps_service import etl_process_gps
 from subscriptions import setup_subscriptions
+from entities import setup_entities
 
 # Import Blueprints
 from routes.irrigation_routes import irrigation_bp
@@ -26,7 +27,7 @@ app.register_blueprint(irrigation_bp)
 app.register_blueprint(gps_bp)
 app.register_blueprint(subscriptions_bp)
 
-@app.route('/')
+@app.route('/etl')
 def home():
     return jsonify({
         "message": "Unified ETL Service is running.",
@@ -44,7 +45,12 @@ def home():
             "subscriptions": {
                 "list_all": "/subscriptions",
                 "health_check": "/subscriptions/health",
-                "recreate": "POST to /subscriptions/recreate"
+                "recreate": "POST to /subscriptions/recreate",
+                "entities": {
+                    "list_entities": "/subscriptions/entities",
+                    "setup_entities": "POST to /subscriptions/entities/setup",
+                    "get_entity": "/subscriptions/entities/{entity_id}"
+                }
             }
         }
     })
@@ -61,6 +67,10 @@ if __name__ == '__main__':
     # Setup automatic subscriptions to Orion Context Broker
     print("\n📡 Setting up automatic subscriptions...")
     setup_subscriptions()
+    
+    # Setup initial sensor entities
+    print("\n🏗️ Setting up initial sensor entities...")
+    setup_entities()
     
     # Start background schedulers
     start_schedulers()
