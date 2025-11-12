@@ -16,8 +16,23 @@ services:
   # ============================================================================
   
   # Frontend - React Web Interface (Port 80)
+  oruga-backend:
+    build: ./orion-nexus/oruga-backend
+    container_name: oruga-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - orion
+    volumes:
+      - ./oruga-backend:/app
+    
   orion-nexus-frontend:
-    build: ./orion-nexus/orion-nexus-frontend
+    build:
+      context: ./orion-nexus/orion-nexus-frontend
+      args:
+        VITE_API_URL: http://${PUBLIC_IP:-localhost}:8000
+        VITE_ORION_URL: http://${PUBLIC_IP:-localhost}:1026
     container_name: orion-nexus-frontend
     hostname: frontend
     restart: unless-stopped
@@ -28,34 +43,11 @@ services:
     networks:
       - default
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:80/health || exit 1"]
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:80 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
-
-  # Backend API - FastAPI Service (Port 8000)
-  oruga-backend:
-    build: ./orion-nexus/oruga-backend
-    container_name: oruga-backend
-    hostname: backend
-    restart: unless-stopped
-    expose:
-      - "8000"
-    ports:
-      - "8000:8000"
-    depends_on:
-      - orion
-    networks:
-      - default
-    volumes:
-      - ./services/oruga-backend:/app
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s
 
   # ETL Service - Data Processing & Analytics (Port 8080)
   etl-service:
