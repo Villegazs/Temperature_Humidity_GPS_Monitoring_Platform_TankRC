@@ -1,5 +1,5 @@
 Flask
 crate
-pymongo
+pymongo==3.12.3
 schedule
 requests
