@@ -5,7 +5,7 @@ Uses a Flask Blueprint to keep routes organized.
 from flask import Blueprint, jsonify, request
 from pymongo import MongoClient
 from services.gps_service import etl_process_gps
-import config
+import configuration as config
 
 gps_bp = Blueprint('gps_bp', __name__)
 

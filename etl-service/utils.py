@@ -5,7 +5,7 @@ like waiting for database connections.
 import time
 from pymongo import MongoClient
 from crate import client
-import config
+import configuration as config
 
 def wait_for_crate():
     """Waits for CrateDB to become available."""

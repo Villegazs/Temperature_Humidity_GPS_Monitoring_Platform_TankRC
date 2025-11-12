@@ -13,6 +13,9 @@ MONGO_IRRIGATION_COLLECTION = "riego_kpi"
 MONGO_GPS_DB = "gps_db"
 MONGO_GPS_COLLECTION = "location_history"
 
+# --- Orion Context Broker Configuration ---
+ORION_URL = "http://orion:1026"
+
 # --- Retry Settings ---
 MAX_RETRIES = 5
 RETRY_DELAY = 10  # seconds

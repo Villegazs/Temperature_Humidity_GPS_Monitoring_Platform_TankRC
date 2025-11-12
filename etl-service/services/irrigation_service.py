@@ -7,7 +7,7 @@ Contains all the business logic for the Irrigation ETL process.
 from datetime import datetime
 from pymongo import MongoClient
 from crate import client
-import config
+import configuration as config
 
 def get_last_irrigation_data():
     """Extracts the latest temperature and humidity reading from CrateDB."""

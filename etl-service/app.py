@@ -3,6 +3,7 @@ Main entry point for the Unified ETL Service application.
 - Initializes the Flask app
 - Registers the blueprints for different services
 - Starts the background schedulers
+- Sets up automatic subscriptions
 - Runs the web server
 """
 from flask import Flask, jsonify
@@ -10,10 +11,12 @@ from utils import wait_for_crate, wait_for_mongo
 from scheduler import start_schedulers
 from services.irrigation_service import etl_process_irrigation
 from services.gps_service import etl_process_gps
+from subscriptions import setup_subscriptions
 
 # Import Blueprints
 from routes.irrigation_routes import irrigation_bp
 from routes.gps_routes import gps_bp
+from routes.subscriptions_routes import subscriptions_bp
 
 # Initialize Flask App
 app = Flask(__name__)
@@ -21,6 +24,7 @@ app = Flask(__name__)
 # Register Blueprints
 app.register_blueprint(irrigation_bp)
 app.register_blueprint(gps_bp)
+app.register_blueprint(subscriptions_bp)
 
 @app.route('/')
 def home():
@@ -36,6 +40,11 @@ def home():
                 "latest_location": "/gps",
                 "history": "/gps/historial",
                 "run_manual_etl": "POST to /gps/run-etl"
+            },
+            "subscriptions": {
+                "list_all": "/subscriptions",
+                "health_check": "/subscriptions/health",
+                "recreate": "POST to /subscriptions/recreate"
             }
         }
     })
@@ -48,6 +57,10 @@ if __name__ == '__main__':
     # Wait for databases to be ready
     wait_for_crate()
     wait_for_mongo()
+    
+    # Setup automatic subscriptions to Orion Context Broker
+    print("\n📡 Setting up automatic subscriptions...")
+    setup_subscriptions()
     
     # Start background schedulers
     start_schedulers()

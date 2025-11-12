@@ -6,7 +6,7 @@ Contains all the business logic for the GPS ETL process.
 from datetime import datetime
 from pymongo import MongoClient
 from crate import client
-import config
+import configuration as config
 
 def get_last_gps_data():
     """Extracts the latest GPS coordinates from CrateDB."""

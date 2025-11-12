@@ -19,6 +19,10 @@ RUN apt-get update && \
 # Copiar el resto del código de la aplicación al directorio de trabajo
 COPY . .
 
+# Establecer variables de entorno por defecto
+ENV PYTHONPATH=/app
+ENV ORION_URL=http://orion:1026
+
 EXPOSE 8080
 # Comando para ejecutar la aplicación usando python3.10
 CMD ["python3.10", "app.py"]
