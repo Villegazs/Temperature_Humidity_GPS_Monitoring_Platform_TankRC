@@ -56,16 +56,16 @@ def create_gps_subscription():
             }],
             "condition": {
                 "attrs": [
-                    "latitud",
-                    "longitud"
+                    "latitude",
+                    "longitude"
                 ]
             }
         },
         "notification": {
             "attrs": [
                 "id",
-                "latitud",
-                "longitud"
+                "latitude",
+                "longitude"
             ],
             "http": {
                 "url": "http://quantumleap:8668/v2/notify"

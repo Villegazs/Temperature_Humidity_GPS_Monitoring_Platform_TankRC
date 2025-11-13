@@ -33,11 +33,11 @@ def create_gps_entity():
     entity_data = {
         "id": "sensor002",
         "type": "sensorGPS",
-        "latitud": {
+        "latitude": {
             "value": 6.26195,
             "type": "float"
         },
-        "longitud": {
+        "longitude": {
             "value": -75.59046,
             "type": "float"
         }
