@@ -528,10 +528,3 @@ When adding new services:
 4. Document in this file
 5. Add to main README.md
 
-## License
-
-[Specify your license here]
-
-## Contact
-
-[Add contact information or repository link]

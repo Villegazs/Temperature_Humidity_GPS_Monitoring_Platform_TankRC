@@ -10,24 +10,24 @@ In the new architecture, the **Sensor Gateway has moved from Port 80 to Port 81*
 
 If your sensors are configured to send data to:
 ```
-❌ OLD: http://98.91.29.98/recibirdatos/sensor001
-❌ OLD: http://98.91.29.98/recibirdatos/sensor002
+❌ OLD: http://publicIP:80/recibirdatos/sensor001
+❌ OLD: http://publicIP:80/recibirdatos/sensor002
 ```
 
 Update them to:
 ```
-✅ NEW: http://98.91.29.98:81/recibirdatos/sensor001
-✅ NEW: http://98.91.29.98:81/recibirdatos/sensor002
+✅ NEW: http://publicIP:81/recibirdatos/sensor001
+✅ NEW: http://publicIP:81/recibirdatos/sensor002
 ```
 
 ## Port Mapping Reference
 
 | Service | Port | URL Example |
 |---------|------|-------------|
-| Frontend (Web UI) | 80 | http://98.91.29.98 |
-| Sensor Gateway | 81 | http://98.91.29.98:81 |
-| Backend API | 8000 | http://98.91.29.98:8000 |
-| ETL Service | 8080 | http://98.91.29.98:8080 |
+| Frontend (Web UI) | 80 | http://publicIP |
+| Sensor Gateway | 81 | http://publicIP:81 |
+| Backend API | 8000 | http://publicIP:8000 |
+| ETL Service | 8080 | http://publicIP:8080 |
 
 ## Update Methods
 
@@ -38,10 +38,10 @@ Most IoT devices allow changing the endpoint URL. Update your sensor configurati
 **Example for ESP8266/ESP32:**
 ```cpp
 // Old
-String serverUrl = "http://98.91.29.98/recibirdatos/sensor001";
+String serverUrl = "http://publicIP/recibirdatos/sensor001";
 
 // New
-String serverUrl = "http://98.91.29.98:81/recibirdatos/sensor001";
+String serverUrl = "http://publicIP:81/recibirdatos/sensor001";
 ```
 
 **Example for Arduino:**
@@ -122,7 +122,7 @@ services:
 **Port 81 (new):**
 ```powershell
 # Should succeed
-Invoke-RestMethod -Uri "http://98.91.29.98:81/recibirdatos/sensor001" `
+Invoke-RestMethod -Uri "http://publicIP/recibirdatos/sensor001" `
   -Method Post `
   -Body '{"temperatura":{"type":"float","value":23.5},"humedad":{"type":"float","value":58.0},"token":"secreto"}' `
   -ContentType 'application/json'
@@ -160,9 +160,9 @@ Test-NetConnection -ComputerName 98.91.29.98 -Port 81
 **Solution**: Ensure path starts with `/recibirdatos/`
 
 ```
-✅ Correct: http://98.91.29.98:81/recibirdatos/sensor001
-❌ Wrong:   http://98.91.29.98:81/sensor001
-❌ Wrong:   http://98.91.29.98:81/recibirdatos
+✅ Correct: http://publicIP:81/recibirdatos/sensor001
+❌ Wrong:   http://publicIP:81/sensor001
+❌ Wrong:   http://publicIP:81/recibirdatos
 ```
 
 ### Issue: "401 Unauthorized"
@@ -220,7 +220,7 @@ docker compose up -d
 ```cpp
 #include <ESP8266HTTPClient.h>
 
-const char* sensorUrl = "http://98.91.29.98:81/recibirdatos/sensor001";
+const char* sensorUrl = "http://publicIP:81/recibirdatos/sensor001";
 
 void sendSensorData(float temp, float humidity) {
   HTTPClient http;
@@ -244,7 +244,7 @@ void sendSensorData(float temp, float humidity) {
 import requests
 import json
 
-GATEWAY_URL = "http://98.91.29.98:81/recibirdatos/sensor001"
+GATEWAY_URL = "http://publicIP:81/recibirdatos/sensor001"
 
 def send_sensor_data(temperature, humidity):
     payload = {
@@ -267,7 +267,7 @@ def send_sensor_data(temperature, humidity):
 ```python
 import requests
 
-GPS_URL = "http://98.91.29.98:81/recibirdatos/sensor002"
+GPS_URL = "http://publicIP:81/recibirdatos/sensor002"
 
 def send_location(lat, lon):
     payload = {
@@ -302,7 +302,7 @@ If you encounter issues:
 
 1. Test sensor gateway directly:
    ```powershell
-   curl -X POST http://98.91.29.98:81/recibirdatos/sensor001 \
+   curl -X POST http://publicIP:81/recibirdatos/sensor001 \
      -H "Content-Type: application/json" \
      -d '{"temperatura":{"type":"float","value":23},"humedad":{"type":"float","value":60},"token":"secreto"}'
    ```
