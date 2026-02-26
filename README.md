@@ -3,6 +3,15 @@
 ## Overview
 Complete FIWARE-based IoT platform for smart irrigation and GPS tracking. This project deploys a modular microservices architecture that ingests telemetry from field sensors, processes data through intelligent ETL pipelines, and provides both REST APIs and a modern web interface for monitoring and control.
 
+<img src= "https://github.com/user-attachments/assets/10deb009-0950-40b2-b4f7-de980f79c3b5" width ="400" />
+<img src= "https://github.com/user-attachments/assets/d241469e-79f6-48fc-a6ba-559517273ff5" width = "400" />
+
+
+
+https://github.com/user-attachments/assets/129cf6fa-049c-41e5-a1cb-6ba8f7288ab6
+
+
+
 ### System C## Key Technologies
 
 - **Frontend**: React 18, TypeScript, Vite, shadcn/ui, TailwindCSS
